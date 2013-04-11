@@ -112,3 +112,10 @@ Lower case method calls work as per Object:
 ```python
 mod.method()                               # mod.method
 ```
+
+About
+-----
+
+MIT licensed; see `LICENSE`.
+
+Lovingly hacked together by [Tom Nixon](https://github.com/tomjnixon).
