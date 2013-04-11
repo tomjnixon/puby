@@ -89,7 +89,7 @@ Setters are the exception to the rule:
 obj.prop = x                               # obj.prop = x
 ```
 
-A few python special objects are implemented:
+A few python special methods are implemented:
 
 ```python
 str(obj)                                   # obj.to_s
