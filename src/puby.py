@@ -299,7 +299,7 @@ _py_to_rb_conversions = {
 	int: C.INT2NUM_f,
 	float: C.rb_float_new,
 	str: lambda s: C.rb_str_new(s, len(s)),
-	RbObjectProxy: lambda x: object.__getattribute__(x, "_value"),
+	RbObjectProxy: lambda x: object.__getattribute__(x, "_value")[0],
 	list: lambda l: C.rb_ary_new4(len(l), ffi.new("VALUE []", map(py_to_rb, l))),
 	bool: lambda b: C.Qtrue if b else C.Qfalse,
 	type(None): lambda n: C.Qnil,
