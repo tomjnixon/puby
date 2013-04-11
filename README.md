@@ -40,7 +40,7 @@ $ pip install git+git://github.com/tomjnixon/puby.git
 ```
 
 Usage
-=====
+-----
 
 ### Import
 
