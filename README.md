@@ -27,7 +27,7 @@ from puby import Object as rb              #
 rb.require('v8')                           # require "v8"
 
 ctx = rb.V8.Context.new()                  # ctx = V8::Context.new
-print ctx.eval("7 * 6")                    # puts ctx.eval "7 * 6"
+print ctx.eval("'Xzibit ' + 7 * 6")        # puts ctx.eval "'Xzibit ' + 7 * 6"
 ```
 
 Install
