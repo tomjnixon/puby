@@ -273,6 +273,7 @@ _rb_to_py_conversions = {
 	C.T_FLOAT: C.RFLOAT_VALUE_f,
 	C.T_MODULE: RbModuleProxy,
 	C.T_OBJECT: RbObjectProxy,
+	C.T_STRUCT: RbObjectProxy,
 	C.T_CLASS: RbClassProxy,
 	C.T_ARRAY: _rb_arr_to_py,
 	C.T_DATA: RbDataProxy,
