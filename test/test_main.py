@@ -117,6 +117,10 @@ def test_gc(testobj):
 	rbObj.GC.start()
 	assert testobj.test_regular() == "test_regular"
 
+def test_range():
+	assert list(rbObj.eval("0..5")) == list(range(6))
+	assert list(rbObj.Range.new(0,5)) == list(range(6))
+
 def test_exception(testobj):
 	with pytest.raises(rb.RubyException) as exception_info:
 		testobj.raise_exc()
