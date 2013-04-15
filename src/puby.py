@@ -277,7 +277,8 @@ _rb_to_py_conversions = {
 	C.T_CLASS: RbClassProxy,
 	C.T_ARRAY: _rb_arr_to_py,
 	C.T_DATA: RbDataProxy,
-	C.T_HASH: lambda h: dict(RbObjectProxy(h).collect().to_a())
+	C.T_HASH: lambda h: dict(RbObjectProxy(h).collect().to_a()),
+	C.T_FILE: RbObjectProxy,
 }
 
 def rb_to_py(value):
