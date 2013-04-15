@@ -47,6 +47,10 @@ class TestClass
     raise "raised_exception"
   end
   
+  def test_cb proc, arg
+    proc.call arg
+  end
+  
   CONST = 5
 end
 """)
@@ -128,3 +132,18 @@ def test_exception(testobj):
 	exception = exception_info.value
 	assert exception.message == "#<RuntimeError: raised_exception>"
 	assert isinstance(exception.rb_exception, rb.RbObjectProxy)
+
+def test_callback(testobj):
+	@rb.RbCallback
+	def cb(x):
+		return x+1
+	
+	assert testobj.test_cb(cb, 5) == 6
+
+def test_callback_gc(testobj):
+	@rb.RbCallback
+	def cb(x):
+		return x+1
+	
+	rbObj.GC.start()
+	assert testobj.test_cb(cb, 5) == 6

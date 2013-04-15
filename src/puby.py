@@ -21,6 +21,7 @@ VALUE rb_require(const char*);
 VALUE rb_equal(VALUE,VALUE);
 void rb_gc_register_address(VALUE*);
 void rb_gc_unregister_address(VALUE*);
+VALUE rb_proc_new(VALUE (*)(), VALUE);
 
 extern VALUE rb_cObject;
 extern VALUE rb_mKernel;
@@ -258,6 +259,18 @@ RbClassProxy = RbModuleProxy
 RbDataProxy = RbObjectProxy
 
 
+class RbCallback(RbProxy):
+	
+	def __init__(self, f):
+		def callback(args, id, argc, argv):
+			res = f(*[rb_to_py(argv[i]) for i in range(argc)])
+			return py_to_rb(res)
+		
+		self._c_callback = ffi.callback("VALUE(*)(VALUE, VALUE, int, VALUE *)", callback)
+		_value = C.rb_proc_new(ffi.cast("VALUE(*)()", self._c_callback), 0)
+		RbProxy.__init__(self, _value)
+
+
 def _rb_arr_to_py(value):
 	len_ptr = C.arr_len_and_ptr_f(value)
 	ptr = len_ptr.ptr
@@ -302,6 +315,7 @@ _py_to_rb_conversions = {
 	float: C.rb_float_new,
 	str: lambda s: C.rb_str_new(s, len(s)),
 	RbObjectProxy: lambda x: object.__getattribute__(x, "_value")[0],
+	RbCallback: lambda x: object.__getattribute__(x, "_value")[0],
 	list: lambda l: C.rb_ary_new4(len(l), ffi.new("VALUE []", map(py_to_rb, l))),
 	bool: lambda b: C.Qtrue if b else C.Qfalse,
 	type(None): lambda n: C.Qnil,
