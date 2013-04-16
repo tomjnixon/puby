@@ -147,3 +147,9 @@ def test_callback_gc(testobj):
 	
 	rbObj.GC.start()
 	assert testobj.test_cb(cb, 5) == 6
+
+def test_cb_plain(testobj):
+	def cb(x):
+		return x+1
+	
+	assert testobj.test_cb(cb, 5) == 6

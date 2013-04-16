@@ -183,7 +183,8 @@ def _call_safe_wrap(f, *args):
 	return rb_to_py(res)
 
 def call(obj, message, *args):
-	rb_args = ffi.new("VALUE []", map(py_to_rb, args))
+	keepalive = []
+	rb_args = ffi.new("VALUE []", [py_to_rb(arg, keepalive.append) for arg in args])
 	return _call_safe_wrap(C.safe_rb_funcall2, obj, intern(message), len(rb_args), rb_args)
 
 def const_get(obj, name):
@@ -322,11 +323,16 @@ _py_to_rb_conversions = {
 	dict: _py_dict_to_rb,
 }
 
-def py_to_rb(value):
+def py_to_rb(value, keepalive=lambda x: None):
 	"""Convert a python object to a ruby VALUE."""
 	try:
 		conversion = _py_to_rb_conversions[type(value)]
 	except KeyError:
+		if hasattr(value, "__call__"):
+			cb_proxy = RbCallback(value)
+			keepalive(cb_proxy)
+			return object.__getattribute__(cb_proxy, "_value")[0]
+		
 		raise NotImplementedError("unimplemented type: {}".format(type(value)))
 	return conversion(value)
 
