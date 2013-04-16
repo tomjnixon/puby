@@ -72,7 +72,7 @@ None                                       # nil
 Ruby objects are represented in python by a proxy object that imitates the
 behaviour of the underlying ruby object.
 
-Unlike in ruby, we generally parentheses to call methods. Method names are
+Unlike in ruby, we generally use parentheses to call methods. Method names are
 munged to make calling `?` and `!` methods easier.
 
 ```python
