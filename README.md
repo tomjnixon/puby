@@ -113,6 +113,49 @@ Lower case method calls work as per Object:
 mod.method()                               # mod.method
 ```
 
+### Callbacks
+
+Python callable objects are automatically wrapped in a ruby Proc when passed
+into a ruby method.
+
+The python side of the wrapper is only kept alive for the duration of the
+current function call; if it will potentially be called by ruby code after
+that, you should use `RbCallback`, keeping the result alive for as long as it
+may be called:
+
+```python
+from puby import Object as rb, RbCallback
+
+rb.eval("""
+class TestObj
+    def save_callback cb
+        @cb = cb
+    end
+    def call_callback x
+        @cb.call(x)
+    end
+end
+""")
+obj = rb.TestObj.new()
+
+def callback(x):
+    return x+1
+
+callback_rb = RbCallback(callback)
+obj.save_callback(callback_rb)
+print obj.call_callback(5)
+```
+
+Note that both of these would segfault:
+```python
+obj.save_callback(callback)
+print obj.call_callback(5)
+```
+```python
+obj.save_callback(RbCallback(callback))
+print obj.call_callback(5)
+```
+
 About
 -----
 
