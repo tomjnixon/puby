@@ -30,6 +30,21 @@ ctx = rb.V8.Context.new()                  # ctx = V8::Context.new
 print ctx.eval("'Xzibit ' + 7 * 6")        # puts ctx.eval "'Xzibit ' + 7 * 6"
 ```
 
+Run a web server:
+```python
+from puby import Object as rb, RbCallback  # 
+rb.require("rack")                         # require "rack"
+                                           # 
+def application(env):                      # def application(env)
+    return [200,                           #   [200,
+            {"Content-Type": "text/html"}, #    {"Content-Type" => "text/html"},
+            ["Hello Puby!"]]               #    ["Hello Puby!"]]
+                                           # end
+rb.Rack.Handler.Thin.run(application)      # Rack::Handler::Thin.run method(:application)
+```
+
+The first person to build a rack-WSGI adapter wins a cookie.
+
 Install
 -------
 
