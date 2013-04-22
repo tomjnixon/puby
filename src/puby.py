@@ -354,4 +354,9 @@ def py_to_rb(value, keepalive=lambda x: None):
 	return conversion(value)
 
 
+def rb_obj(py_value):
+	"""Convert a python object to a wrapped ruby object."""
+	return RbObjectProxy(py_to_rb(py_value))
+
+
 Object = RbClassProxy(C.rb_cObject)

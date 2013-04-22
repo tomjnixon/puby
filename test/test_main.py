@@ -158,3 +158,9 @@ def test_cb_plain(testobj):
 		return x+1
 	
 	assert testobj.test_cb(cb, 5) == 6
+
+def test_rb_obj_str():
+	assert rb.rb_obj("foo").upcase() == "FOO"
+
+def test_rb_obj_int():
+	assert list(rb.rb_obj(0).upto(5)) == range(6)
