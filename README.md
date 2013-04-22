@@ -171,6 +171,15 @@ obj.save_callback(RbCallback(callback))
 print obj.call_callback(5)
 ```
 
+### Symbols
+
+Ruby symbols are converted to/from objects of the `RbSymbol` class an empty
+subclass of `str`.
+
+```python
+obj.method(RbSymbol("foo"))                # mod.method :foo
+```
+
 About
 -----
 
