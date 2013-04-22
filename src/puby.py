@@ -64,6 +64,8 @@ char *RSTRING_PTR_f(VALUE x);
 size_t RSTRING_LEN_f(VALUE x);
 double RFLOAT_VALUE_f(VALUE x);
 
+VALUE rb_sym_to_s(VALUE);
+
 typedef struct {
 	size_t len;
 	VALUE *ptr;
@@ -77,6 +79,7 @@ VALUE rb_ary_new4(long, const VALUE *);
 VALUE rb_hash_new(void);
 VALUE rb_hash_aset(VALUE, VALUE, VALUE);
 VALUE rb_hash_delete(VALUE,VALUE);
+VALUE rb_sym_new(char *s, long len);
 
 VALUE rb_const_get(VALUE, ID);
 
@@ -152,6 +155,10 @@ VALUE safe_rb_const_get(VALUE obj, ID name, int *error) {
 
 VALUE safe_rb_require(char *mod, int *error) {
 	return rb_protect((VALUE (*)(VALUE))rb_require, (VALUE)mod, error);
+}
+
+VALUE rb_sym_new(const char *s, long len) {
+	return ID2SYM(rb_intern2(s, len));
 }
 
 """,
@@ -272,15 +279,23 @@ class RbCallback(RbProxy):
 		RbProxy.__init__(self, _value)
 
 
+class RbSymbol(str):
+	"""A ruby Symbol."""
+	pass
+
+
 def _rb_arr_to_py(value):
 	len_ptr = C.arr_len_and_ptr_f(value)
 	ptr = len_ptr.ptr
 	
 	return [rb_to_py(ptr[i]) for i in range(len_ptr.len)]
 
+def _rb_str_to_py(value):
+	return ffi.buffer(C.RSTRING_PTR_f(value), C.RSTRING_LEN_f(value))[:]
+
 _rb_to_py_conversions = {
 	C.T_FIXNUM: C.FIX2LONG_f,
-	C.T_STRING: lambda value: ffi.buffer(C.RSTRING_PTR_f(value), C.RSTRING_LEN_f(value))[:],
+	C.T_STRING: _rb_str_to_py,
 	C.T_TRUE: lambda value: True,
 	C.T_FALSE: lambda value: False,
 	C.T_NIL: lambda value: None,
@@ -293,6 +308,7 @@ _rb_to_py_conversions = {
 	C.T_DATA: RbDataProxy,
 	C.T_HASH: lambda h: dict(RbObjectProxy(h).collect().to_a()),
 	C.T_FILE: RbObjectProxy,
+	C.T_SYMBOL: lambda value: RbSymbol(_rb_str_to_py(C.rb_sym_to_s(value))),
 }
 
 def rb_to_py(value):
@@ -321,6 +337,7 @@ _py_to_rb_conversions = {
 	bool: lambda b: C.Qtrue if b else C.Qfalse,
 	type(None): lambda n: C.Qnil,
 	dict: _py_dict_to_rb,
+	RbSymbol: lambda s: C.rb_sym_new(s, len(s)),
 }
 
 def py_to_rb(value, keepalive=lambda x: None):

@@ -74,9 +74,14 @@ rb_to_py = (
 	("[1,2,3,4]", [1,2,3,4]),
 	("[[1]]", [[1]]),
 	("{1=>2, 3=>4}", {1:2, 3:4}),
+	(":foo", rb.RbSymbol("foo")),
 )
 
-@pytest.mark.parametrize("case", rb_to_py)
+rb_to_py_only = (
+	(":foo", "foo"),
+)
+
+@pytest.mark.parametrize("case", rb_to_py + rb_to_py_only)
 def test_rb_to_py(case):
 	ruby, python = case
 	assert rb.rb_to_py(rb.C.rb_eval_string(ruby)) == python
