@@ -4,27 +4,24 @@ ffi.cdef("""
 typedef uintptr_t VALUE;
 typedef uintptr_t ID;
 
+// Initialisation.
 void ruby_init(void);
-void ruby_init_loadpath(void);
 void ruby_script(const char*);
+void *ruby_options(int, char**);
+
+// For testing.
 VALUE rb_eval_string(const char*);
-VALUE rb_protect(VALUE (*)(VALUE), VALUE, int*);
-VALUE rb_funcall(VALUE, ID, int, ...);
-VALUE rb_funcall2(VALUE, ID, int, const VALUE*);
-ID rb_intern(const char*);
-char *rb_string_value_ptr(volatile VALUE*);
-VALUE rb_ivar_get(VALUE, ID);
-VALUE rb_gv_get(const char*);
-static inline int rb_type(VALUE obj);
-int rb_respond_to(VALUE, ID);
-VALUE rb_require(const char*);
 VALUE rb_equal(VALUE,VALUE);
-void rb_gc_register_address(VALUE*);
-void rb_gc_unregister_address(VALUE*);
-VALUE rb_proc_new(VALUE (*)(), VALUE);
 
 extern VALUE rb_cObject;
-extern VALUE rb_mKernel;
+void rb_gc_register_address(VALUE*);
+void rb_gc_unregister_address(VALUE*);
+VALUE rb_gv_get(const char*);
+ID rb_intern(const char*);
+
+static inline int rb_type(VALUE obj);
+VALUE rb_proc_new(VALUE (*)(), VALUE);
+
 
 #define T_NONE   ...
 #define T_NIL    ...
@@ -58,7 +55,6 @@ extern VALUE rb_mKernel;
 #define Qnil   ...
 
 long FIX2LONG_f(VALUE x);
-long rb_str_strlen(VALUE);
 
 char *RSTRING_PTR_f(VALUE x);
 size_t RSTRING_LEN_f(VALUE x);
@@ -78,16 +74,12 @@ VALUE rb_str_new(const char*, long);
 VALUE rb_ary_new4(long, const VALUE *);
 VALUE rb_hash_new(void);
 VALUE rb_hash_aset(VALUE, VALUE, VALUE);
-VALUE rb_hash_delete(VALUE,VALUE);
 VALUE rb_sym_new(char *s, long len);
 
-VALUE rb_const_get(VALUE, ID);
-
+// Safe wrappers.
 VALUE safe_rb_funcall2(VALUE obj, ID func, int argc, const VALUE *argv, int *error);
 VALUE safe_rb_const_get(VALUE obj, ID name, int *error);
 VALUE safe_rb_require(char *mod, int *error);
-
-void *ruby_options(int, char**);
 """)
 
 C = ffi.verify("""
