@@ -1,4 +1,22 @@
 from cffi import FFI
+
+def get_verify_args():
+	"""Discover lib and include dirs for the current ruby."""
+	import subprocess
+	args = [
+			"ruby", "-rrbconfig",
+			"-e", "puts RbConfig::CONFIG['rubyhdrdir']",
+			"-e", "puts File.join(RbConfig::CONFIG['rubyhdrdir'], RbConfig::CONFIG['arch'])",
+			"-e", "puts RbConfig::CONFIG['libdir']",
+			]
+	hdrdir, archhdrdir, libdir = subprocess.check_output(args).splitlines()
+	
+	return dict(
+			libraries=["ruby"],
+			library_dirs=[libdir],
+			runtime_library_dirs=[libdir],
+			include_dirs=[hdrdir, archhdrdir])
+
 ffi = FFI()
 ffi.cdef("""
 typedef uintptr_t VALUE;
@@ -154,8 +172,7 @@ VALUE rb_sym_new(const char *s, long len) {
 }
 
 """,
-	libraries=["ruby"],
-	include_dirs=["/usr/include/ruby-1.9.1/", "/usr/include/ruby-1.9.1/i686-linux"])
+	**get_verify_args())
 
 # Initialise the interpreter.
 C.ruby_init()
