@@ -48,8 +48,6 @@ The first person to build a rack-WSGI adapter wins a cookie.
 Install
 -------
 
-This currently requires exactly ruby-1.9.1.
-
 ```
 $ pip install git+git://github.com/tomjnixon/puby.git
 ```
@@ -184,9 +182,6 @@ Todo
 ----
 
 - A general tidy up; everything is still a bit of a mess.
-- Get rid of unused C definitions.
-- Support other rubys. This probably means compiling the extension at install
-  time.
 - Make sure everything is safe. Everything is mostly OK, but there are a few
   situations where a garbage collection would probably be bad news.
 - Add a way of proxying python objects into ruby land.
