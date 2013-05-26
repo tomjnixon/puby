@@ -32,7 +32,7 @@ print ctx.eval("'Xzibit ' + 7 * 6")        # puts ctx.eval "'Xzibit ' + 7 * 6"
 
 Run a web server:
 ```python
-from puby import Object as rb, RbCallback  # 
+from puby import Object as rb              # 
 rb.require("rack")                         # require "rack"
                                            # 
 def application(env):                      # def application(env)
